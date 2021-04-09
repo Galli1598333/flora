@@ -62,6 +62,7 @@ class INET_API SimpleLoRaApp : public cSimpleModule, public ILifecycle
         cOutVector tpVector;
         cOutVector xVector;
         cOutVector yVector;
+        cOutVector zVector;
         cOutVector countVector;
 
 
