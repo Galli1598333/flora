@@ -203,8 +203,8 @@ void SimpleLoRaApp::sendJoinRequest()
     RandomWPMobility *mobility = check_and_cast<RandomWPMobility *>(host->getSubmodule("mobility"));
     Coord coord = mobility->getCurrentPosition();
     xVector.recordWithTimestamp(simTime(), coord.x);
-    yVector.recordWithTimestamp(simTime(), coord.y);
-    zVector.recordWithTimestamp(simTime(), coord.z);
+    yVector.record(coord.y);  //record only one with simtime, to reduce data volume
+    zVector.record(coord.z);
 
     send(request, "appOut");
     if(evaluateADRinNode)
