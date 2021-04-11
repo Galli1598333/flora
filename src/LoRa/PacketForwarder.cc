@@ -19,6 +19,7 @@
 #include "inet/networklayer/common/L3AddressResolver.h"
 #include "inet/common/ModuleAccess.h"
 #include "inet/applications/base/ApplicationPacket_m.h"
+#include "LoRaApp/LoRaAppPacket_m.h"
 
 namespace inet {
 
@@ -35,6 +36,8 @@ void PacketForwarder::initialize(int stage)
     } else if (stage == INITSTAGE_APPLICATION_LAYER) {
         startUDP();
         getSimulation()->getSystemModule()->subscribe("LoRa_AppPacketSent", this);
+        recvMsgId.setName("Received Message Id");
+        recvDevId.setName("Received Device Id");
     }
 
 }
@@ -70,6 +73,12 @@ void PacketForwarder::handleMessage(cMessage *msg)
     if (msg->arrivedOn("lowerLayerIn")) {
         EV << "Received LoRaMAC frame" << endl;
         LoRaMacFrame *frame = check_and_cast<LoRaMacFrame *>(PK(msg));
+        // record message reception
+        LoRaAppPacket *appFrame = check_and_cast<LoRaAppPacket*>(frame->decapsulate());
+        int msgId = appFrame->getSampleMeasurement();
+        int devId = appFrame->getDeviceId();
+        recvMsgId.recordWithTimestamp(simTime(), msgId);
+        recvDevId.recordWithTimestamp(simTime(), devId);
         if(frame->getReceiverAddress() == DevAddr::BROADCAST_ADDRESS)
             processLoraMACPacket(PK(msg));
         //send(msg, "upperLayerOut");
@@ -92,7 +101,6 @@ void PacketForwarder::processLoraMACPacket(cPacket *pk)
     if (simTime() >= getSimulation()->getWarmupPeriod())
         counterOfReceivedPackets++;
     LoRaMacFrame *frame = check_and_cast<LoRaMacFrame *>(pk);
-
     physicallayer::ReceptionIndication *cInfo = check_and_cast<physicallayer::ReceptionIndication *>(pk->getControlInfo());
     W w_rssi = cInfo->getMinRSSI();
     double rssi = w_rssi.get()*1000;
