@@ -91,10 +91,6 @@ class INET_API NetworkServerApp : public cSimpleModule, cListener
     void receiveSignal(cComponent *source, simsignal_t signalID, long value, cObject *details) override;
     bool evaluateADRinServer;
 
-    cOutVector payloadVector;
-    cOutVector rssiVector;
-    cOutVector senderVector;
-
     cHistogram receivedRSSI;
   public:
     simsignal_t LoRa_ServerPacketReceived;

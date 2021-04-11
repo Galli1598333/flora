@@ -36,9 +36,10 @@ class INET_API PacketForwarder : public cSimpleModule, public cListener
     // state
     UDPSocket socket;
     cMessage *selfMsg = nullptr;
-    // received messages
+    // received messages vector
     cOutVector recvMsgId;
     cOutVector recvDevId;
+    cOutVector recvRssi;
 
   protected:
     virtual void initialize(int stage) override;

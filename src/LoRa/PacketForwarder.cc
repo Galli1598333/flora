@@ -36,8 +36,9 @@ void PacketForwarder::initialize(int stage)
     } else if (stage == INITSTAGE_APPLICATION_LAYER) {
         startUDP();
         getSimulation()->getSystemModule()->subscribe("LoRa_AppPacketSent", this);
-        recvMsgId.setName("Received Message Id");
-        recvDevId.setName("Received Device Id");
+        recvMsgId.setName("Gateway / Received Message Id");
+        recvDevId.setName("Gateway / Received Device Id");
+        recvRssi.setName("Gateway / Received RSSI");
     }
 
 }
@@ -78,7 +79,8 @@ void PacketForwarder::handleMessage(cMessage *msg)
         int msgId = appFrame->getSampleMeasurement();
         int devId = appFrame->getDeviceId();
         recvMsgId.recordWithTimestamp(simTime(), msgId);
-        recvDevId.recordWithTimestamp(simTime(), devId);
+        recvDevId.record(devId);
+        recvRssi.record(frame->getRSSI());
         if(frame->getReceiverAddress() == DevAddr::BROADCAST_ADDRESS)
             processLoraMACPacket(PK(msg));
         //send(msg, "upperLayerOut");

@@ -39,9 +39,6 @@ void NetworkServerApp::initialize(int stage)
         evaluateADRinServer = par("evaluateADRinServer");
         adrDeviceMargin = par("adrDeviceMargin");
         receivedRSSI.setName("Received RSSI");
-        payloadVector.setName("Counter Payload Vector");
-        senderVector.setName("Sender Id Vector");
-        rssiVector.setName("RSSI Vector");
         totalReceivedPackets = 0;
         for(int i=0;i<6;i++)
         {
@@ -213,14 +210,6 @@ void NetworkServerApp::addPktToProcessingTable(LoRaMacFrame* pkt)
         rcvPkt.possibleGateways.emplace_back(cInfo->getSrcAddr(), math::fraction2dB(pkt->getSNIR()), pkt->getRSSI());
         scheduleAt(simTime() + 1.2, rcvPkt.endOfWaiting);
         receivedPackets.push_back(rcvPkt);
-        LoRaAppPacket *rcvAppPacket = check_and_cast<LoRaAppPacket*>(pkt->decapsulate());
-
-        int counter = rcvAppPacket->getSampleMeasurement();
-        int senderId = rcvAppPacket->getDeviceId();
-        double rssi = pkt->getRSSI();
-        payloadVector.recordWithTimestamp(simTime(), counter);
-        senderVector.recordWithTimestamp(simTime(), senderId);
-        rssiVector.recordWithTimestamp(simTime(), rssi);
     }
 }
 
