@@ -70,6 +70,7 @@ void SimpleLoRaApp::initialize(int stage)
         tpVector.setName("TP Vector");
         xVector.setName("X Vector");
         yVector.setName("Y Vector");
+        zVector.setName("Z Vector");
         countVector.setName("counter Vector");
     }
 }
@@ -203,6 +204,7 @@ void SimpleLoRaApp::sendJoinRequest()
     Coord coord = mobility->getCurrentPosition();
     xVector.recordWithTimestamp(simTime(), coord.x);
     yVector.recordWithTimestamp(simTime(), coord.y);
+    zVector.recordWithTimestamp(simTime(), coord.z);
 
     send(request, "appOut");
     if(evaluateADRinNode)
