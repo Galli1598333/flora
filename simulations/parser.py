@@ -10,7 +10,8 @@ output_fpath = input_fpath.replace(".json", "_processed.json")
 
 
 """
-TO BE DEFINED!!!
+- - - WORK IN PROGRESS - - -
+
 Output schema:
 {
 	"gateways": {
@@ -21,33 +22,58 @@ Output schema:
 				"Z":	#gateway z coord
 		1: ...
 	}
+
+	"nTotMsgs":	1337				#integer, total number of sent messages
+	"messages": [					#3-dimensional tensor, expressed as list of lists of lists. Has shape (nTotMsgs, nGws, 2), where nGws is the number of gateways
+		[
+			(time_gw0, rssi_gw0),
+			(time_gw1, rssi_gw1),
+			(time_gw2, rssi_gw2),
+			...
+		],
+		[ 
+			...
+		],
+		...
+	]
+
+	# messages is a tensor:
+	#
+	#		--	  	gw1				gw2				gw3				...		gwM
+	#	________________________________________________________________________
+	#	|	msg1  |	(time, rssi)	(time, rssi)	(time, rssi)
+	#	|	msg2  |	(time, rssi)	(....)
+	#	|	msg3  |	...
+	#	|	msg4  |
+	#	|	...	  |
+	#	|	msgN  |
+	#
+	#
+	#	So for example messages[42][2][0] will retrieve the time in which the gateway with id 2 
+	#	has received the message with id 42. Similarly messages[42][2][1] retrieves the rssi
+	#
+
 	
 	"devices": {
-		0:						#integer device id
-			"initialPos":
-				"X":			#initial device x coord
-				"Y":			#initial device x coord
-				"Z":			#initial device x coord
-			"pos":
-				"X": [ ... ]	#vector of x coordinates recorded when a message is sent
-				"Y": [ ... ]	#vector of y coordinates recorded when a message is sent
-				"Z": [ ... ]	#vector of z coordinates recorded when a message is sent
-		1: ...
-	}
-
-	"messages": [  		#ordered list of sent messages
-		{
-			"devId":			#integer device id that sent the message
-			"msgId":			#integer message id of the device. This id is coherent with the position of the message in the list ["devices"]["pos"]["X"/"Y"/"Z"]
-			"recipients": {		#contains the ids of the gateways that have received the message
-				42: {			#integer id of a gateway receiving the message
-					"time":		#simulation time when it was received
-					"rssi":		#double, rssi value
-				}
-				1337: ...
+		0: {						#integer device id
+			"nDevMsgs": 42			#integer, number of sent messages by the device. The sum of "nDevMsgs" for all devices is equal to "nTotMsgs"
+			"msgIds": [				#list of message id sent by the device. The indices in this list are the indices in "messages" tensor corresponding to packets sent by the device. Has length "nDevMsgs"
+				3,					#assuming numpy is used, to isolate the packets sent by a device it should suffice to do messages[msgIds]
+				5,
+				6,
+				10,
+				...
+			]
+			"msgPos": {
+				"X": [ ... ]		#vector of x coordinates recorded when a message is sent. i-th entry references the i-th sent packet of the device. Has length "nDevMsgs" 
+				"Y": [ ... ]		#vector of y coordinates recorded when a message is sent. i-th entry references the i-th sent packet of the device. Has length "nDevMsgs" 
+				"Z": [ ... ]		#vector of z coordinates recorded when a message is sent. i-th entry references the i-th sent packet of the device. Has length "nDevMsgs" 
 			}
-		}
-	]
+			"msgTimes": [ ... ] 	#list of times in which a message was sent by the device, one timestamp per message. Has length "nDevMsgs"
+		},
+
+		1: { ... }
+	}
 }
 """
 output = {}
