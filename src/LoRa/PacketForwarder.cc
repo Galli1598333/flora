@@ -17,6 +17,7 @@
 #include "inet/networklayer/ipv4/IPv4Datagram.h"
 #include "inet/networklayer/contract/ipv4/IPv4ControlInfo.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
+#include "inet/mobility/static/StationaryMobility.h"
 #include "inet/common/ModuleAccess.h"
 #include "inet/applications/base/ApplicationPacket_m.h"
 #include "LoRaApp/LoRaAppPacket_m.h"
@@ -150,6 +151,12 @@ void PacketForwarder::receiveSignal(cComponent *source, simsignal_t signalID, lo
 void PacketForwarder::finish()
 {
     recordScalar("LoRa_GW_DER", double(counterOfReceivedPackets)/counterOfSentPacketsFromNodes);
+    // record position
+    cModule *host = getContainingNode(this);
+    StationaryMobility *mobility = check_and_cast<StationaryMobility*>(host->getSubmodule("mobility"));
+    Coord coord = mobility->getCurrentPosition();
+    recordScalar("Gateway X", coord.x);
+    recordScalar("Gateway Y", coord.y);
 }
 
 
