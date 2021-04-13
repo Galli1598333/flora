@@ -9,6 +9,8 @@ import loranetwork.LoraNode.LoRaGW;
 import inet.node.inet.StandardHost;
 import inet.networklayer.configurator.ipv4.IPv4NetworkConfigurator;
 import inet.node.ethernet.Eth1G;
+import inet.environment.common.PhysicalEnvironment;
+import inet.visualizer.contract.IIntegratedVisualizer;
 
 @license(LGPL);
 network LoRaNetworkTest
@@ -20,6 +22,12 @@ network LoRaNetworkTest
         int networkSizeY = default(500);
         @display("bgb=355.824,356.832");
     submodules:
+        visualizer: <default("IntegratedCanvasVisualizer")> like IIntegratedVisualizer if hasVisualizer() {
+            @display("p=580,125");
+        }
+        physicalEnvironment: PhysicalEnvironment {
+            @display("p=220,170");
+        }
         loRaNodes[numberOfNodes]: LoRaNode {
             @display("p=83.664,233.856");
         }
