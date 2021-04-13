@@ -33,6 +33,7 @@ void SimpleLoRaApp::initialize(int stage)
            mobility->par("speed").setDoubleValue(host->par("speed"));
            mobility->par("initialX").setDoubleValue(coordsValues.first);
            mobility->par("initialY").setDoubleValue(coordsValues.second);
+           mobility->par("initialZ").setDoubleValue(host->par("initialZ"));
         }
     }
     else if (stage == INITSTAGE_APPLICATION_LAYER) {
